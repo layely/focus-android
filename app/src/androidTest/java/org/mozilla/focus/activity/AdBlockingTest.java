@@ -8,7 +8,6 @@ package org.mozilla.focus.activity;
 import android.content.Context;
 import android.preference.PreferenceManager;
 import android.support.test.InstrumentationRegistry;
-import android.support.test.filters.Suppress;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.uiautomator.UiObject;
 import android.support.test.uiautomator.UiObjectNotFoundException;
@@ -27,7 +26,6 @@ import static org.mozilla.focus.fragment.FirstrunFragment.FIRSTRUN_PREF;
 // This test checks basic ad blocking capability
 // Disabled with @Suppress, because this does not run in Google Test Cloud properly.
 // When executed locally, it runs fine
-@Suppress
 public class AdBlockingTest {
 
     @Rule

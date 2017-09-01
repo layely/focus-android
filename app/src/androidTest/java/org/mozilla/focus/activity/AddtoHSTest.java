@@ -17,11 +17,9 @@ import android.support.test.uiautomator.UiSelector;
 
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mozilla.focus.session.SessionManager;
 
 import java.io.IOException;
 
@@ -29,7 +27,6 @@ import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 
 import static android.support.test.espresso.action.ViewActions.click;
-import static org.mozilla.focus.activity.TestHelper.mDevice;
 import static org.mozilla.focus.activity.TestHelper.waitingTime;
 import static org.mozilla.focus.fragment.FirstrunFragment.FIRSTRUN_PREF;
 
@@ -201,7 +198,6 @@ public class AddtoHSTest {
     }
 
     @Test
-    @Ignore("Feature has been disabled for the current milestone")
     public void SearchTermShortcutTest() throws InterruptedException, UiObjectNotFoundException, IOException {
         UiObject shortcutIcon = TestHelper.mDevice.findObject(new UiSelector()
                 .className("android.widget.TextView")
