@@ -103,9 +103,10 @@ public class AdBlockingTest {
         TestHelper.browserURLbar.waitForExists(waitingTime);
 
         //Back to the webpage
-        TestHelper.browserURLbar.click();
+        TestHelper.floatingEraseButton.perform(click());
+        TestHelper.erasedMsg.waitForExists(waitingTime);
+        assertTrue(TestHelper.erasedMsg.exists());
         TestHelper.inlineAutocompleteEditText.waitForExists(waitingTime);
-        TestHelper.inlineAutocompleteEditText.clearTextField();
         TestHelper.inlineAutocompleteEditText.setText("ads-blocker.com/testing/");
         TestHelper.hint.waitForExists(waitingTime);
         TestHelper.pressEnterKey();
