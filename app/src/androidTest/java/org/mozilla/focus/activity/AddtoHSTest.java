@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.preference.PreferenceManager;
 import android.support.test.InstrumentationRegistry;
+import android.support.test.filters.Suppress;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.uiautomator.UiObject;
@@ -198,6 +199,7 @@ public class AddtoHSTest {
     }
 
     @Test
+    @Suppress
     public void SearchTermShortcutTest() throws InterruptedException, UiObjectNotFoundException, IOException {
         UiObject shortcutIcon = TestHelper.mDevice.findObject(new UiSelector()
                 .className("android.widget.TextView")
