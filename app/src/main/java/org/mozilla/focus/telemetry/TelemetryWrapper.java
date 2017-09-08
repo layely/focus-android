@@ -24,7 +24,6 @@ import org.mozilla.telemetry.config.TelemetryConfiguration;
 import org.mozilla.telemetry.event.TelemetryEvent;
 import org.mozilla.telemetry.measurement.DefaultSearchMeasurement;
 import org.mozilla.telemetry.measurement.SearchesMeasurement;
-import org.mozilla.telemetry.net.DebugLogClient;
 import org.mozilla.telemetry.net.HttpURLConnectionTelemetryClient;
 import org.mozilla.telemetry.net.TelemetryClient;
 import org.mozilla.telemetry.ping.TelemetryCorePingBuilder;
@@ -62,6 +61,7 @@ public final class TelemetryWrapper {
         private static final String SAVE = "save";
         private static final String COPY = "copy";
         private static final String OPEN = "open";
+        private static final String INSTALL = "install";
         private static final String INTENT_URL = "intent_url";
         private static final String INTENT_CUSTOM_TAB = "intent_custom_tab";
         private static final String TEXT_SELECTION_INTENT = "text_selection_intent";
@@ -90,6 +90,7 @@ public final class TelemetryWrapper {
         private static final String ADD_TO_HOMESCREEN_DIALOG = "add_to_homescreen_dialog";
         private static final String HOMESCREEN_SHORTCUT = "homescreen_shortcut";
         private static final String TABS_TRAY = "tabs_tray";
+        private static final String RECENT_APPS = "recent_apps";
     }
 
     private static class Value {
@@ -375,6 +376,11 @@ public final class TelemetryWrapper {
                 .queue();
     }
 
+    public static void eraseTaskRemoved() {
+        withSessionCounts(TelemetryEvent.create(Category.ACTION, Method.CLICK, Object.RECENT_APPS, Value.ERASE))
+                .queue();
+    }
+
     public static void settingsEvent(String key, String value) {
         TelemetryEvent.create(Category.ACTION, Method.CHANGE, Object.SETTING, key)
                 .extra(Extra.TO, value)
@@ -424,6 +430,10 @@ public final class TelemetryWrapper {
 
     public static void openFirefoxEvent() {
         TelemetryEvent.create(Category.ACTION, Method.OPEN, Object.MENU, Value.FIREFOX).queue();
+    }
+
+    public static void installFirefoxEvent() {
+        TelemetryEvent.create(Category.ACTION, Method.INSTALL, Object.APP, Value.FIREFOX).queue();
     }
 
     public static void openSelectionEvent() {

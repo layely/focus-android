@@ -40,14 +40,15 @@
   <string name="preference_performance_block_webfonts">ບັອກຕົວອັກສອນເວັບ</string>
   <string name="preference_performance_block_webfonts_summary">ອາດຈະສົ່ງຜົນເຮັດໃຫ້ໄອຄອນ ຫລື ຮູບພາບຂາດຫາຍໄປ</string>
   <string name="preference_performance_block_images">ບັອກຮູບພາບ</string>
-  <string name="preference_default_browser">ຕັ້ງໃຫ້ເປັນເວັບບຣາວເຊີຫລັກ</string>
   <string name="preference_category_mozilla">Mozilla</string>
-  <string name="preference_mozilla_telemetry">ສົ່ງຂໍ້ມູນການໃຊ້ງານແບບບໍ່ລະບຸຕົວຕົນ</string>
   <string name="preference_mozilla_telemetry_summary">ຮຽນຮູ້ເພີ່ມເຕີມ</string>
   <string name="preference_about">ກ່ຽວກັບ %1$s</string>
   <string name="content_description_clear_input">ລົບລ້າງຂໍ້ມູນທີ່ປ້ອນເຂົ້າ</string>
   <string name="content_description_dismiss_input">ຍົກເລີກ</string>
   <string name="content_description_erase">ລຶບປະຫວັດການທ່ອງເວັບ</string>
+  <string name="content_description_fab_expand">ຂະຫຍາຍ</string>
+  <string name="content_description_open_tab">ເປີດແທັບ</string>
+  <string name="content_description_close_tab">ປິດແທັບ</string>
   <string name="content_description_lock">ການເຊື່ອມຕໍ່ທີ່ປອດໄພ</string>
   <string name="accessibility_announcement_loading">ກຳລັງໂຫລດ</string>
   <string name="accessibility_announcement_loading_finished">ໂຫລດເວັບໄຊທ໌ນີ້ແລ້ວ</string>

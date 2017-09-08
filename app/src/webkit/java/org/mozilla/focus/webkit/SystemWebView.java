@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -38,14 +37,14 @@ import org.mozilla.focus.web.Download;
 import org.mozilla.focus.web.IWebView;
 import org.mozilla.focus.web.WebViewProvider;
 
-public class WebkitView extends NestedWebView implements IWebView, SharedPreferences.OnSharedPreferenceChangeListener {
+public class SystemWebView extends NestedWebView implements IWebView, SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "WebkitView";
 
     private Callback callback;
     private FocusWebViewClient client;
     private final LinkHandler linkHandler;
 
-    public WebkitView(Context context, AttributeSet attrs) {
+    public SystemWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         client = new FocusWebViewClient(getContext().getApplicationContext());
@@ -104,6 +103,8 @@ public class WebkitView extends NestedWebView implements IWebView, SharedPrefere
                 : null;
 
         final String desiredURL = session.getUrl().getValue();
+
+        client.restoreState(stateData);
         client.notifyCurrentURL(desiredURL);
 
         // Pages are only added to the back/forward list when loading finishes. If a new page is
@@ -131,7 +132,9 @@ public class WebkitView extends NestedWebView implements IWebView, SharedPrefere
         // browsing session is active. The data that WebView stores in this bundle is too large for
         // Android to save and restore as part of the state bundle.
         final Bundle stateData = new Bundle();
+
         super.saveState(stateData);
+        client.saveState(this, stateData);
 
         session.saveWebViewState(stateData);
     }
@@ -139,10 +142,10 @@ public class WebkitView extends NestedWebView implements IWebView, SharedPrefere
     @Override
     public void setBlockingEnabled(boolean enabled) {
         client.setBlockingEnabled(enabled);
-    }
 
-    public boolean isBlockingEnabled() {
-        return client.isBlockingEnabled();
+        if (callback != null) {
+            callback.onBlockingStateChanged(enabled);
+        }
     }
 
     @Override

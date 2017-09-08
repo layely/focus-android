@@ -10,9 +10,12 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.net.http.SslCertificate;
 import android.net.http.SslError;
+import android.os.Bundle;
 import android.support.v4.util.ArrayMap;
 import android.support.v4.view.ViewCompat;
+import android.text.TextUtils;
 import android.view.View;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebResourceRequest;
@@ -21,6 +24,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import org.mozilla.focus.R;
+import org.mozilla.focus.browser.LocalizedContent;
 import org.mozilla.focus.locale.Locales;
 import org.mozilla.focus.utils.HtmlLoader;
 import org.mozilla.focus.utils.IntentUtils;
@@ -35,10 +39,15 @@ import java.util.Map;
  * and external URL handling.
  */
 /* package */ class FocusWebViewClient extends TrackingProtectionWebViewClient {
-    private final static String ERROR_PROTOCOL = "error:";
+    private static final String ERROR_PROTOCOL = "error:";
+    private static final String STATE_KEY_URL = "client_last_url";
+    private static final String STATE_KEY_CERTIFICATE = "client_last_certificate";
 
     private boolean errorReceived;
     private Context context;
+
+    private String restoredUrl;
+    private SslCertificate restoredCertificate;
 
     /* package */ FocusWebViewClient(Context context) {
         super(context);
@@ -158,10 +167,42 @@ import java.util.Map;
         super.onPageStarted(view, url, favicon);
     }
 
+    /* package */ void saveState(WebView view, Bundle bundle) {
+        final SslCertificate certificate = view.getCertificate();
+        if (certificate != null) {
+            bundle.putString(STATE_KEY_URL, view.getUrl());
+            bundle.putBundle(STATE_KEY_CERTIFICATE, SslCertificate.saveState(certificate));
+        }
+    }
+
+    /* package */ void restoreState(Bundle bundle) {
+        if (bundle.containsKey(STATE_KEY_CERTIFICATE)) {
+            restoredUrl = bundle.getString(STATE_KEY_URL);
+            restoredCertificate = SslCertificate.restoreState(bundle.getBundle("client_last_certificate"));
+        }
+    }
+
     @Override
     public void onPageFinished(WebView view, final String url) {
+        SslCertificate certificate = view.getCertificate();
+
+        if (!TextUtils.isEmpty(restoredUrl)) {
+            if (restoredUrl.equals(url) && certificate == null) {
+                // We just restored the previous state. Let's re-use the certificate we restored.
+                // The reason for that is that WebView doesn't restore the certificate itself.
+                // Without restoring the certificate manually we'd lose the certificate when
+                // switching tabs or restoring a previous session for other reasons.
+                certificate = restoredCertificate;
+            } else {
+                // The URL has changed since we restored the last state. Let's just clear all
+                // restored data because we do not need it anymore.
+                restoredUrl = null;
+                restoredCertificate = null;
+            }
+        }
+
         if (callback != null) {
-            callback.onPageFinished(view.getCertificate() != null);
+            callback.onPageFinished(certificate != null);
             // The URL which is supplied in onPageFinished() could be fake (see #301), but webview's
             // URL is always correct _except_ for error pages
             final String viewURL = view.getUrl();
@@ -183,8 +224,8 @@ import java.util.Map;
 
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, String url) {
-        if (url.equals("focusabout:")) {
-            loadAbout(view);
+        // If this is an internal URL like focus:about then we load the content ourselves here.
+        if (LocalizedContent.handleInternalContent(url, view)) {
             return true;
         }
 
@@ -232,8 +273,7 @@ import java.util.Map;
     }
 
     @Override
-    public void onReceivedError(final WebView webView, int errorCode,
-                                final String description, String failingUrl) {
+    public void onReceivedError(final WebView webView, int errorCode, final String description, String failingUrl) {
         errorReceived = true;
 
         // This is a hack: onReceivedError(WebView, WebResourceRequest, WebResourceError) is API 23+ only,
@@ -277,47 +317,4 @@ import java.util.Map;
 
         super.onReceivedError(webView, errorCode, description, failingUrl);
     }
-
-    private void loadAbout(final WebView webView) {
-        final Resources resources = Locales.getLocalizedResources(webView.getContext());
-
-        final Map<String, String> substitutionMap = new ArrayMap<>();
-        final String appName = webView.getContext().getResources().getString(R.string.app_name);
-        final String learnMoreURL = SupportUtils.getManifestoURL();
-
-        String aboutVersion = "";
-        try {
-            final PackageInfo packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-            aboutVersion = String.format("%s (Build #%s)", packageInfo.versionName, packageInfo.versionCode);
-        } catch (PackageManager.NameNotFoundException e) {
-            // Nothing to do if we can't find the package name.
-        }
-        substitutionMap.put("%about-version%", aboutVersion);
-
-        final String aboutContent = resources.getString(R.string.about_content, appName, learnMoreURL);
-        substitutionMap.put("%about-content%", aboutContent);
-
-        final String wordmark = HtmlLoader.loadPngAsDataURI(webView.getContext(), R.drawable.wordmark);
-        substitutionMap.put("%wordmark%", wordmark);
-
-        ViewCompat.setLayoutDirection(webView, View.LAYOUT_DIRECTION_LOCALE);
-        final int layoutDirection = ViewCompat.getLayoutDirection(webView);
-
-        final String direction;
-
-        if (layoutDirection == View.LAYOUT_DIRECTION_LTR) {
-            direction = "ltr";
-        } else if (layoutDirection == View.LAYOUT_DIRECTION_RTL) {
-            direction = "rtl";
-        } else {
-            direction = "auto";
-        }
-        substitutionMap.put("%dir%", direction);
-
-        final String data = HtmlLoader.loadResourceFile(webView.getContext(), R.raw.about, substitutionMap);
-        // We use a file:/// base URL so that we have the right origin to load file:/// css and
-        // image resources.
-        webView.loadDataWithBaseURL("file:///android_res/raw/about.html", data, "text/html", "UTF-8", null);
-    }
-
 }

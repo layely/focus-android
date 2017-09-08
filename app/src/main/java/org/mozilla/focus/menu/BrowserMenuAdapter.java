@@ -8,7 +8,6 @@ package org.mozilla.focus.menu;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.res.Resources;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -16,10 +15,10 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import org.mozilla.focus.R;
+import org.mozilla.focus.customtabs.CustomTabConfig;
 import org.mozilla.focus.fragment.BrowserFragment;
 import org.mozilla.focus.utils.Browsers;
 import org.mozilla.focus.utils.HardwareUtils;
-import org.mozilla.focus.customtabs.CustomTabConfig;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -67,15 +66,6 @@ public class BrowserMenuAdapter extends RecyclerView.Adapter<BrowserMenuViewHold
 
         if (customTabConfig == null || customTabConfig.showShareMenuItem) {
             items.add(new MenuItem(R.id.share, resources.getString(R.string.menu_share)));
-        }
-
-        if (browsers.hasFirefoxBrandedBrowserInstalled()) {
-            items.add(new MenuItem(R.id.open_firefox, resources.getString(
-                    R.string.menu_open_with_default_browser, browsers.getFirefoxBrandedBrowser()
-                            .loadLabel(context.getPackageManager()))));
-        } else {
-            items.add(new MenuItem(R.id.open_firefox, resources.getString(
-                    R.string.menu_open_with_default_browser, "Firefox")));
         }
 
         if (browsers.hasThirdPartyDefaultBrowser(context)) {

@@ -5,7 +5,6 @@
 
 package org.mozilla.focus.web;
 
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -69,6 +68,8 @@ public interface IWebView {
         void countBlockedTracker();
 
         void resetBlockedTrackers();
+
+        void onBlockingStateChanged(boolean isBlockingEnabled);
     }
 
     interface FullscreenCallback {
@@ -79,8 +80,6 @@ public interface IWebView {
      * Enable/Disable content blocking for this session (Only the blockers that are enabled in the app's settings will be turned on/off).
      */
     void setBlockingEnabled(boolean enabled);
-
-    boolean isBlockingEnabled();
 
     void setCallback(Callback callback);
 
