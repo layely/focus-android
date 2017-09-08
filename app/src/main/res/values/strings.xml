@@ -395,4 +395,9 @@ be temporary, and you can try again later.</li>
 
     <!-- Label for a button in the "tabs tray" to erase the browsing history (closes all tabs and removes associated data). -->
     <string name="tabs_tray_action_erase">Erase browsing history</string>
+
+    <string name="erase_dialog_prompt_text">Would you really erase the browsing history ?</string>
+    <string name="erase_dialog_title">Erase history</string>
+    <string name="erase_dialog_action_cancel">CANCEL</string>
+    <string name="erase_dialog_action_erase">ERASE</string>
 </resources>

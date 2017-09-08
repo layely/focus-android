@@ -39,6 +39,7 @@
     <color name="onboarding_indicator_selected">#FFFFFFFF</color>
 
     <color name="download_dialog_text">#FF00A4DC</color>
+    <color name="erase_dialog_text">#FF00A4DC</color>
 
     <color name="colorSession">#272727</color>
     <color name="colorAction">#FF0A84FF</color>
