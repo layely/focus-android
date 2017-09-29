@@ -275,4 +275,29 @@ public class SessionManagerTest {
         assertFalse(sessionManager.hasSession());
         assertEquals(0, sessionManager.getSessions().getValue().size());
     }
+
+    @Test
+    public void testHasCreatedSessionInTheBackground() {
+        final SessionManager sessionManager = SessionManager.getInstance();
+
+        assertEquals(0, sessionManager.getSessions().getValue().size());
+
+        sessionManager.createSession(Source.USER_ENTERED, TEST_URL);
+        assertEquals(1, sessionManager.getSessions().getValue().size());
+
+        final Session session1 = sessionManager.getCurrentSession();
+        assertNotNull(session1);
+
+        sessionManager.createSessionInTheBackground(Source.MENU, TEST_URL_2);
+        assertEquals(2, sessionManager.getSessions().getValue().size());
+
+        final Session session2 = sessionManager.getSessions().getValue().get(1);
+        assertNotNull(session2);
+
+        //new created session is not the current session
+        assertFalse(session2.getUUID() == sessionManager.getCurrentSession().getUUID());
+
+        //session1 is still the currentSession
+        assertTrue(session1.getUUID() == sessionManager.getCurrentSession().getUUID());
+    }
 }

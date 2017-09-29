@@ -98,6 +98,7 @@ public class WebContextMenu {
         navigationView.inflateMenu(R.menu.menu_browser_context);
 
         navigationView.getMenu().findItem(R.id.menu_new_tab).setVisible(hitTarget.isLink);
+        navigationView.getMenu().findItem(R.id.menu_new_tab_background).setVisible(hitTarget.isLink);
         navigationView.getMenu().findItem(R.id.menu_link_share).setVisible(hitTarget.isLink);
         navigationView.getMenu().findItem(R.id.menu_link_copy).setVisible(hitTarget.isLink);
         navigationView.getMenu().findItem(R.id.menu_image_share).setVisible(hitTarget.isImage);
@@ -115,6 +116,11 @@ public class WebContextMenu {
                     case R.id.menu_new_tab: {
                         SessionManager.getInstance().createSession(Source.MENU, hitTarget.linkURL);
                         TelemetryWrapper.openLinkInNewTabEvent();
+                        return true;
+                    }
+                    case R.id.menu_new_tab_background: {
+                        SessionManager.getInstance().createSessionInTheBackground(Source.MENU, hitTarget.linkURL);
+                        TelemetryWrapper.openLinkInNewTabInTheBackgroundEvent();
                         return true;
                     }
                     case R.id.menu_link_share: {

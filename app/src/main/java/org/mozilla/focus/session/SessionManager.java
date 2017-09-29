@@ -166,20 +166,25 @@ public class SessionManager {
 
     public void createSession(@NonNull Source source, @NonNull String url) {
         final Session session = new Session(source, url);
-        addSession(session);
+        addSession(session, true);
+    }
+
+    public void createSessionInTheBackground(@NonNull Source source, @NonNull String url) {
+        final Session session = new Session(source, url);
+        addSession(session, false);
     }
 
     public void createSearchSession(@NonNull Source source, @NonNull String url, String searchTerms) {
         final Session session = new Session(source, url);
         session.setSearchTerms(searchTerms);
-        addSession(session);
+        addSession(session, true);
     }
 
     private void createSession(Context context, Source source, SafeIntent intent, String url) {
         final Session session = CustomTabConfig.isCustomTabIntent(intent)
                 ? new Session(url, CustomTabConfig.parseCustomTabIntent(context, intent))
                 : new Session(source, url);
-        addSession(session);
+        addSession(session, true);
     }
 
     private void createSession(Context context, Source source, SafeIntent intent, String url, boolean blockingEnabled) {
@@ -187,11 +192,13 @@ public class SessionManager {
                 ? new Session(url, CustomTabConfig.parseCustomTabIntent(context, intent))
                 : new Session(source, url);
         session.setBlockingEnabled(blockingEnabled);
-        addSession(session);
+        addSession(session, true);
     }
 
-    private void addSession(Session session) {
-        currentSessionUUID = session.getUUID();
+    private void addSession(Session session, boolean isCurrentSession) {
+        if(isCurrentSession) {
+            currentSessionUUID = session.getUUID();
+        }
 
         final List<Session> sessions = new ArrayList<>(this.sessions.getValue());
         sessions.add(session);

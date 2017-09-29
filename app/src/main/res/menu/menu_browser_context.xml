@@ -7,6 +7,9 @@
         android:id="@+id/menu_new_tab"
         android:title="@string/contextmenu_open_in_new_tab" />
     <item
+        android:id="@+id/menu_new_tab_background"
+        android:title="@string/contextmenu_open_in_new_tab_in_the_background" />
+    <item
         android:id="@+id/menu_link_share"
         android:title="@string/contextmenu_link_share" />
     <item

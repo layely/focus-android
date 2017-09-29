@@ -416,6 +416,11 @@ public final class TelemetryWrapper {
                 .queue();
     }
 
+    public static void openLinkInNewTabInTheBackgroundEvent() {
+        withSessionCounts(TelemetryEvent.create(Category.ACTION, Method.OPEN + " / " + Method.BACKGROUND, Object.BROWSER_CONTEXTMENU, Value.TAB))
+                .queue();
+    }
+
     public static void openWebContextMenuEvent() {
         TelemetryEvent.create(Category.ACTION, Method.LONG_PRESS, Object.BROWSER).queue();
     }
